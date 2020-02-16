@@ -1,3 +1,9 @@
+# ide settings
+.vscode
+
+# local data
+db.sqlite3
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
