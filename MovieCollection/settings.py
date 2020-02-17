@@ -121,6 +121,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Django REST Framework
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
