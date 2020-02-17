@@ -1,20 +1,31 @@
 from django.contrib.auth.models import User, Group
 from django.http import HttpResponse, Http404
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserSerializer, GroupSerializer, MovieSerializer
 from .models import Movie
+from .permissions import IsOwnerOrReadOnly
 
 def index(request):
     return HttpResponse("Hello, world. You're at the api index.")
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
+# class UserViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed or edited.
+#     """
+#     queryset = User.objects.all().order_by('-date_joined')
+#     serializer_class = UserSerializer
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
@@ -26,6 +37,10 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 class MovieList(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
     def get(self, request, format=None):
         movies = Movie.objects.all()
@@ -36,13 +51,14 @@ class MovieList(APIView):
         serializer = MovieSerializer(data=request.data)
         
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MovieDetail(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_object(self, pk):
         try:

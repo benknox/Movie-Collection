@@ -18,8 +18,9 @@ from django.urls import include, path
 from rest_framework import routers
 from src import views
 
+# TODO: move `src` routes into the src app
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
+#router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 
 # Wire up our API using automatic URL routing.
@@ -27,7 +28,9 @@ router.register(r'groups', views.GroupViewSet)
 urlpatterns = [
     path('', views.index),
     path('admin/', admin.site.urls),
-    path('datas/', include(router.urls)),
+    #path('datas/', include(router.urls)),
+    path('users/', views.UserList.as_view()),
+    path('users/<int:pk>/', views.UserDetail.as_view()),
     path('movies/', views.MovieList.as_view()),
     path('movies/<uuid:pk>', views.MovieDetail.as_view()),
     path(
