@@ -1,0 +1,1 @@
+web: gunicorn MovieCollection.wsgi --log-file -
