@@ -13,4 +13,7 @@ git push heroku master
 
 # then you can open it in a browser with
 heroku open
+
+# Don't forget to send your changes to git too
+git push
 ```
